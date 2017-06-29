@@ -7,7 +7,7 @@ from sanic.response import HTTPResponse
 from sanic.views import HTTPMethodView
 
 from graphql.type.schema import GraphQLSchema
-from graphql.execution.executors.asyncio import AsyncioExecutor
+# from graphql.execution.executors.asyncio import AsyncioExecutor
 from graphql_server import (HttpQueryError, default_format_error,
                             encode_execution_results, json_encode,
                             load_json_body, run_http_query)
@@ -39,7 +39,7 @@ class GraphQLView(HTTPMethodView):
             if hasattr(self, key):
                 setattr(self, key, value)
 
-        self._enable_async = self._enable_async and isinstance(self.executor, AsyncioExecutor)
+        # self._enable_async = self._enable_async and isinstance(self.executor, AsyncioExecutor)
         assert isinstance(self.schema, GraphQLSchema), 'A Schema is required to be provided to GraphQLView.'
 
     # noinspection PyUnusedLocal
@@ -81,7 +81,7 @@ class GraphQLView(HTTPMethodView):
             pretty = self.pretty or show_graphiql or request.args.get('pretty')
 
             if request_method != 'options':
-                execution_results, all_params = run_http_query(
+                execution_results, all_params = await run_http_query(
                     self.schema,
                     request_method,
                     data,
@@ -90,15 +90,15 @@ class GraphQLView(HTTPMethodView):
                     catch=catch,
 
                     # Execute options
-                    return_promise=self._enable_async,
+                    # return_promise=self._enable_async,
                     root_value=self.get_root_value(request),
                     context_value=self.get_context(request),
                     middleware=self.get_middleware(request),
                     executor=self.get_executor(request),
                 )
-                awaited_execution_results = await Promise.all(execution_results)
+                # awaited_execution_results = await Promise.all(execution_results)
                 result, status_code = encode_execution_results(
-                    awaited_execution_results,
+                    execution_results,
                     is_batch=isinstance(data, list),
                     format_error=self.format_error,
                     encode=partial(self.encode, pretty=pretty)
