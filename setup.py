@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 required_packages = [
-    'graphql-core>=1.0',
-    'graphql-server-core>=1.0.dev',
+    '-e git+https://github.com/graphql-python/graphql-core.git@f449bbe991c31b5c49f9fbecd28880f5c8d63e73#egg=graphql_core',
+    '-e git+https://github.com/schrockn/graphql-server-core.git@17de32b5a4baa77b57e18a1debbf333467695ccf#egg=graphql_server_core',
     'sanic>=0.5.1',
     'pytest-runner'
 ]
