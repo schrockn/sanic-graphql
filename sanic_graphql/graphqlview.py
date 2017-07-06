@@ -1,7 +1,6 @@
 from functools import partial
 from cgi import parse_header
 
-
 from promise import Promise
 from sanic.response import HTTPResponse
 from sanic.views import HTTPMethodView
@@ -20,6 +19,7 @@ class GraphQLView(HTTPMethodView):
     executor = None
     root_value = None
     context = None
+    root_factory = None
     pretty = False
     graphiql = False
     graphiql_version = None
@@ -44,6 +44,8 @@ class GraphQLView(HTTPMethodView):
 
     # noinspection PyUnusedLocal
     def get_root_value(self, request):
+        if self.root_factory:
+            return self.root_factory()
         return self.root_value
 
     def get_context(self, request):
